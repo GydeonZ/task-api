@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/GydeonZ/task-api/internal/domain"
 	"github.com/GydeonZ/task-api/internal/service"
@@ -21,12 +20,12 @@ func NewListHandler(listSvc service.ListService) *ListHandler {
 
 func (h *ListHandler) GetLists(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	lists, err := h.listSvc.GetLists(userID, uint(boardID))
+	lists, err := h.listSvc.GetLists(userID, boardID)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -36,7 +35,7 @@ func (h *ListHandler) GetLists(c *gin.Context) {
 
 func (h *ListHandler) CreateList(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
@@ -46,7 +45,7 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	list, err := h.listSvc.CreateList(userID, uint(boardID), &req)
+	list, err := h.listSvc.CreateList(userID, boardID, &req)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -56,12 +55,12 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 
 func (h *ListHandler) UpdateList(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	listID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	listID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
@@ -71,7 +70,7 @@ func (h *ListHandler) UpdateList(c *gin.Context) {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	list, err := h.listSvc.UpdateList(userID, uint(boardID), uint(listID), &req)
+	list, err := h.listSvc.UpdateList(userID, boardID, listID, &req)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -81,17 +80,17 @@ func (h *ListHandler) UpdateList(c *gin.Context) {
 
 func (h *ListHandler) DeleteList(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	listID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	listID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	if err := h.listSvc.DeleteList(userID, uint(boardID), uint(listID)); err != nil {
+	if err := h.listSvc.DeleteList(userID, boardID, listID); err != nil {
 		response.Error(c, err)
 		return
 	}

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/GydeonZ/task-api/internal/domain"
 	"github.com/GydeonZ/task-api/internal/service"
@@ -21,17 +20,17 @@ func NewCardHandler(cardSvc service.CardService) *CardHandler {
 
 func (h *CardHandler) GetCards(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	listID, err := strconv.ParseUint(c.Param("listID"), 10, 64)
+	listID, err := parseID(c.Param("listID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	cards, err := h.cardSvc.GetCards(userID, uint(boardID), uint(listID))
+	cards, err := h.cardSvc.GetCards(userID, boardID, listID)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -41,12 +40,12 @@ func (h *CardHandler) GetCards(c *gin.Context) {
 
 func (h *CardHandler) CreateCard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	listID, err := strconv.ParseUint(c.Param("listID"), 10, 64)
+	listID, err := parseID(c.Param("listID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
@@ -56,7 +55,7 @@ func (h *CardHandler) CreateCard(c *gin.Context) {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	card, err := h.cardSvc.CreateCard(userID, uint(boardID), uint(listID), &req)
+	card, err := h.cardSvc.CreateCard(userID, boardID, listID, &req)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -66,22 +65,22 @@ func (h *CardHandler) CreateCard(c *gin.Context) {
 
 func (h *CardHandler) GetCard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	listID, err := strconv.ParseUint(c.Param("listID"), 10, 64)
+	listID, err := parseID(c.Param("listID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	cardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	cardID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	card, err := h.cardSvc.GetCard(userID, uint(boardID), uint(listID), uint(cardID))
+	card, err := h.cardSvc.GetCard(userID, boardID, listID, cardID)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -91,17 +90,17 @@ func (h *CardHandler) GetCard(c *gin.Context) {
 
 func (h *CardHandler) UpdateCard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	listID, err := strconv.ParseUint(c.Param("listID"), 10, 64)
+	listID, err := parseID(c.Param("listID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	cardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	cardID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
@@ -111,7 +110,7 @@ func (h *CardHandler) UpdateCard(c *gin.Context) {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	card, err := h.cardSvc.UpdateCard(userID, uint(boardID), uint(listID), uint(cardID), &req)
+	card, err := h.cardSvc.UpdateCard(userID, boardID, listID, cardID, &req)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -121,22 +120,22 @@ func (h *CardHandler) UpdateCard(c *gin.Context) {
 
 func (h *CardHandler) DeleteCard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("boardID"), 10, 64)
+	boardID, err := parseID(c.Param("boardID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	listID, err := strconv.ParseUint(c.Param("listID"), 10, 64)
+	listID, err := parseID(c.Param("listID"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	cardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	cardID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	if err := h.cardSvc.DeleteCard(userID, uint(boardID), uint(listID), uint(cardID)); err != nil {
+	if err := h.cardSvc.DeleteCard(userID, boardID, listID, cardID); err != nil {
 		response.Error(c, err)
 		return
 	}
@@ -145,7 +144,7 @@ func (h *CardHandler) DeleteCard(c *gin.Context) {
 
 func (h *CardHandler) MoveCard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	cardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	cardID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
@@ -155,7 +154,7 @@ func (h *CardHandler) MoveCard(c *gin.Context) {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	card, err := h.cardSvc.MoveCard(userID, uint(cardID), &req)
+	card, err := h.cardSvc.MoveCard(userID, cardID, &req)
 	if err != nil {
 		response.Error(c, err)
 		return

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/GydeonZ/task-api/internal/domain"
 	"github.com/GydeonZ/task-api/internal/service"
@@ -46,12 +45,12 @@ func (h *BoardHandler) CreateBoard(c *gin.Context) {
 
 func (h *BoardHandler) GetBoard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	boardID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	board, err := h.boardSvc.GetBoard(userID, uint(boardID))
+	board, err := h.boardSvc.GetBoard(userID, boardID)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -61,7 +60,7 @@ func (h *BoardHandler) GetBoard(c *gin.Context) {
 
 func (h *BoardHandler) UpdateBoard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	boardID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
@@ -71,7 +70,7 @@ func (h *BoardHandler) UpdateBoard(c *gin.Context) {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	board, err := h.boardSvc.UpdateBoard(userID, uint(boardID), &req)
+	board, err := h.boardSvc.UpdateBoard(userID, boardID, &req)
 	if err != nil {
 		response.Error(c, err)
 		return
@@ -81,12 +80,12 @@ func (h *BoardHandler) UpdateBoard(c *gin.Context) {
 
 func (h *BoardHandler) DeleteBoard(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	boardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	boardID, err := parseID(c.Param("id"))
 	if err != nil {
 		response.Error(c, apperrors.ErrBadRequest)
 		return
 	}
-	if err := h.boardSvc.DeleteBoard(userID, uint(boardID)); err != nil {
+	if err := h.boardSvc.DeleteBoard(userID, boardID); err != nil {
 		response.Error(c, err)
 		return
 	}
