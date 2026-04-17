@@ -1,0 +1,31 @@
+version: '1'
+linters-settings:
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: github.com/GydeonZ
+  golint:
+    min-confidence: 0.8
+  gocyclo:
+    min-complexity: 15
+  govet:
+    check-shadowing: true
+  misspell:
+    ignore-words: []
+
+linters:
+  presets:
+    - bugs
+    - unused
+  disable:
+    - govet
+    - errcheck
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
