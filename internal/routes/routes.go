@@ -34,28 +34,6 @@ func SetupRoutes(app *fiber.App) {
 			"status": "ok",
 		})
 	})
-
-	// Serve static OpenAPI spec
-	app.Static("/openapi.yaml", "./docs/openapi.yaml")
-
-	// Serve Scalar docs UI
-	app.Get("/docs", func(c *fiber.Ctx) error {
-		html := `<!doctype html>
-<html>
-  <head>
-    <title>Task API Docs</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  </head>
-  <body>
-    <script id="api-reference" data-url="/openapi.yaml"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
-  </body>
-</html>`
-		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
-		return c.SendString(html)
-	})
-
 	// API v1 routes (versioning for future-proofing & for public API)
 	api := app.Group("/api/v1")
 
